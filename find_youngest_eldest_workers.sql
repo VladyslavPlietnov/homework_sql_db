@@ -1,0 +1,53 @@
+SELECT MIN(BIRTHDAY), id
+FROM worker
+GROUP BY id;
+SELECT MAX(BIRTHDAY)
+FROM worker;
+SELECT*FROM project;
+
+CREATE TABLE length_of_LIFE(
+    ID INT PRIMARY KEY, 
+    NAME VARCHAR(100),
+    BIRTHDAY DATE, 
+    TYPE VARCHAR(10),
+    CHECK( TYPE IN ('Youngest','Eldest', NULL)),
+    FOREIGN KEY (ID) REFERENCES worker(id)
+);
+
+INSERT length_of_LIFE VALUES(2, NULL, NULL,NULL);
+INSERT length_of_LIFE VALUES(3, NULL, NULL,NULL);
+INSERT length_of_LIFE VALUES(4, NULL, NULL,NULL);
+INSERT length_of_LIFE VALUES(5, NULL, NULL,NULL);
+INSERT length_of_LIFE VALUES(6, NULL, NULL,NULL);
+INSERT length_of_LIFE VALUES(7, NULL, NULL,NULL);
+INSERT length_of_LIFE VALUES(8, NULL, NULL,NULL);
+INSERT length_of_LIFE VALUES(9, NULL, NULL,NULL);
+INSERT length_of_LIFE VALUES(10, NULL, NULL,NULL);
+INSERT length_of_LIFE VALUES(11, NULL, NULL,NULL);
+
+UPDATE length_of_LIFE 
+SET BIRTHDAY = (
+   SELECT BIRTHDAY
+   FROM worker
+   WHERE length_of_LIFE.ID = worker.id 
+),
+NAME =(
+   SELECT NAME
+   FROM worker
+   WHERE length_of_LIFE.ID = worker.id 
+),
+TYPE = (
+   CASE WHEN (BIRTHDAY = (
+      SELECT MAX(BIRTHDAY)
+      FROM worker
+      )) THEN 'Youngest'
+        WHEN (BIRTHDAY = (
+      SELECT MIN(BIRTHDAY)
+      FROM worker
+      )) THEN 'Eldest'
+   END
+)
+;
+
+DELETE FROM length_of_LIFE WHERE TYPE = NULL;
+SELECT*FROM length_of_LIFE;
